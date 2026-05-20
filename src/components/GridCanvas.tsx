@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout/legacy";
 import type { Layout, LayoutItem, ResponsiveLayouts } from "react-grid-layout/legacy";
 import {
@@ -8,6 +8,7 @@ import {
   GRID_ROW_HEIGHT,
   PANELS,
   loadLayouts,
+  resetLayouts,
   saveLayouts,
 } from "../lib/layout";
 import CountdownPanel from "./CountdownPanel";
@@ -31,12 +32,20 @@ const PANEL_MAP: Record<string, React.ComponentType<any>> = {
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-export default function GridCanvas() {
+interface Props {
+  /** Increment this counter to trigger a full layout reset */
+  resetTick?: number;
+}
+
+export default function GridCanvas({ resetTick = 0 }: Props) {
   const [layouts, setLayouts] = useState(loadLayouts);
   const saveTimer = useRef<ReturnType<typeof setTimeout>>();
   const [containerWidth, setContainerWidth] = useState(1200);
   const [currentBreakpoint, setCurrentBreakpoint] = useState("lg");
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  // ── Reset valve: blocks dynamic min-size callbacks during reset ──
+  const isResetting = useRef(false);
 
   // Track container width for min-size calculations
   const handleWidthChange = useCallback((width: number) => {
@@ -49,6 +58,8 @@ export default function GridCanvas() {
 
   const handleLayoutChange = useCallback(
     (_currentLayout: Layout, allLayouts: ResponsiveLayouts) => {
+      // Ignore layout changes while resetting (prevents stale saves)
+      if (isResetting.current) return;
       if (saveTimer.current) clearTimeout(saveTimer.current);
       saveTimer.current = setTimeout(() => {
         saveLayouts(allLayouts);
@@ -61,6 +72,9 @@ export default function GridCanvas() {
   // ── Dynamic min-size callback from panels ──
   const handleMinSizeChange = useCallback(
     (key: string, minW: number, minH: number) => {
+      // Block during reset to prevent state write-back conflicts
+      if (isResetting.current) return;
+
       setLayouts((prev) => {
         const bp = currentBreakpoint;
         const bpLayout = prev[bp];
@@ -74,12 +88,9 @@ export default function GridCanvas() {
           const staticMinW = staticMin?.w ?? 2;
           const staticMinH = staticMin?.h ?? 2;
 
-          // minW=0 from hook means "don't touch width" — reset to static default
-          // minH=0 from hook means "don't touch height"
           const effectiveMinW = minW > 0 ? Math.max(minW, staticMinW) : staticMinW;
           const effectiveMinH = minH > 0 ? Math.max(minH, staticMinH) : (item.minH ?? staticMinH);
 
-          // Only update if values actually changed
           if (effectiveMinW === (item.minW ?? 0) && effectiveMinH <= (item.minH ?? 0)) return item;
 
           changed = true;
@@ -101,6 +112,29 @@ export default function GridCanvas() {
     },
     [currentBreakpoint]
   );
+
+  // ── Global layout reset state machine ──
+  const prevResetTick = useRef(resetTick);
+  useEffect(() => {
+    if (resetTick === prevResetTick.current) return;
+    prevResetTick.current = resetTick;
+
+    // 1. Open valve: block all dynamic min-size callbacks and layout saves
+    isResetting.current = true;
+
+    // 2. Purge localStorage + get deep copy of initial defaults
+    const defaults = resetLayouts();
+
+    // 3. Atomic state overwrite — forces full re-render
+    setLayouts(defaults);
+
+    // 4. Close valve in next frame after React commits the reset
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        isResetting.current = false;
+      });
+    });
+  }, [resetTick]);
 
   const panelKeys = useMemo(() => Object.keys(PANEL_MAP), []);
 

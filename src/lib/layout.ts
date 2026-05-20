@@ -60,7 +60,8 @@ export const PANELS: PanelDef[] = [
   },
 ];
 
-const DEFAULT_LAYOUTS: ResponsiveLayouts = {
+/** Immutable initial layout constant — the single source of truth for reset. */
+export const INITIAL_DEFAULT_LAYOUT: ResponsiveLayouts = Object.freeze({
   lg: [
     { i: "countdown", x: 0, y: 0, w: 12, h: 4, minW: 6, minH: 4 },
     { i: "todo", x: 0, y: 4, w: 6, h: 7, minW: 6, minH: 5 },
@@ -82,7 +83,7 @@ const DEFAULT_LAYOUTS: ResponsiveLayouts = {
     { i: "notice", x: 0, y: 16, w: 6, h: 6, minW: 6, minH: 5 },
     { i: "quicklinks", x: 0, y: 22, w: 6, h: 6, minW: 6, minH: 3 },
   ],
-};
+} as ResponsiveLayouts);
 
 export function loadLayouts(): ResponsiveLayouts {
   try {
@@ -91,9 +92,9 @@ export function loadLayouts(): ResponsiveLayouts {
       const parsed = JSON.parse(raw) as ResponsiveLayouts;
       // Validate that all expected keys exist and min constraints are respected
       for (const panel of PANELS) {
-        for (const bp of Object.keys(DEFAULT_LAYOUTS) as Array<"lg" | "md" | "sm">) {
+        for (const bp of Object.keys(INITIAL_DEFAULT_LAYOUT) as Array<"lg" | "md" | "sm">) {
           const item = parsed[bp]?.find((l: LayoutItem) => l.i === panel.key);
-          if (!item) return DEFAULT_LAYOUTS;
+          if (!item) return INITIAL_DEFAULT_LAYOUT;
           // Reset minW/minH to static defaults on load.
           // Dynamic min sizes are recalculated at runtime by useContentMinSize.
           // This prevents stale inflated values from old hook bugs from persisting.
@@ -109,7 +110,7 @@ export function loadLayouts(): ResponsiveLayouts {
   } catch {
     // Ignore parse errors
   }
-  return DEFAULT_LAYOUTS;
+  return INITIAL_DEFAULT_LAYOUT;
 }
 
 export function saveLayouts(layouts: ResponsiveLayouts): void {
@@ -118,4 +119,17 @@ export function saveLayouts(layouts: ResponsiveLayouts): void {
   } catch {
     // Ignore storage errors
   }
+}
+
+/**
+ * Atomic reset: purge persisted layout from localStorage and return
+ * a deep copy of INITIAL_DEFAULT_LAYOUT for immediate state replacement.
+ */
+export function resetLayouts(): ResponsiveLayouts {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore storage errors
+  }
+  return JSON.parse(JSON.stringify(INITIAL_DEFAULT_LAYOUT)) as ResponsiveLayouts;
 }

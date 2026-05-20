@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import GridCanvas from "./components/GridCanvas";
 
 export default function App() {
+  const [resetTick, setResetTick] = useState(0);
+
   const handleMinimize = async () => {
     try {
       await getCurrentWindow().minimize();
@@ -18,6 +21,10 @@ export default function App() {
     }
   };
 
+  const handleReset = () => {
+    setResetTick((t) => t + 1);
+  };
+
   return (
     <main className="px-4 py-6 md:px-8">
       <header className="mb-6 flex items-start justify-between">
@@ -27,7 +34,14 @@ export default function App() {
             校园生活效率伴侣：管理任务、归档思考、追踪目标，把握学生时代的节奏。
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleReset}
+            className="rounded-lg border border-[var(--cf-border)] px-3 py-2 text-sm text-[var(--cf-muted)] transition-colors hover:bg-[rgba(126,145,117,0.12)] hover:text-[var(--cf-text)]"
+            title="重置为默认布局"
+          >
+            ↻ 重置布局
+          </button>
           <button
             onClick={handleMinimize}
             className="rounded-lg bg-[var(--cf-bg)] px-3 py-2 text-sm font-medium text-[var(--cf-text)] hover:bg-[var(--cf-panel)] transition-colors"
@@ -45,7 +59,7 @@ export default function App() {
         </div>
       </header>
 
-      <GridCanvas />
+      <GridCanvas resetTick={resetTick} />
     </main>
   );
 }
