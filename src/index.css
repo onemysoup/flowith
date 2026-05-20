@@ -1,0 +1,296 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, rgba(126, 145, 117, 0.1), transparent 45%),
+    radial-gradient(circle at bottom left, rgba(154, 93, 64, 0.14), transparent 40%), var(--cf-bg);
+  color: var(--cf-text);
+  font-family: var(--cf-font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ── Grid Canvas ── */
+
+.grid-canvas {
+  width: 100%;
+}
+
+.grid-item {
+  overflow: hidden;
+}
+
+.grid-item-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  /* Container queries for responsive internal layouts */
+  container-type: size;
+  container-name: widget;
+}
+
+/* ── Drag Handle ── */
+
+.grid-drag-handle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  cursor: grab;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 200ms ease, opacity 200ms ease;
+  opacity: 0;
+}
+
+.grid-item:hover .grid-drag-handle {
+  opacity: 1;
+}
+
+.grid-drag-handle:hover {
+  background: rgba(126, 145, 117, 0.18);
+}
+
+.grid-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* ── Grid Placeholder (snap preview) ── */
+
+.react-grid-placeholder {
+  background: rgba(126, 145, 117, 0.15) !important;
+  border: 2px dashed rgba(126, 145, 117, 0.4) !important;
+  border-radius: 18px !important;
+  opacity: 1 !important;
+  transition: all 150ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* ── Spring / Jelly Animation for Grid Items ── */
+
+/* Hardware acceleration hints */
+.react-grid-item {
+  will-change: transform, width, height;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Spring easing: slight overshoot for jelly feel */
+.react-grid-item.cssTransforms {
+  transition-property: transform, width, height;
+  transition-duration: 320ms;
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* While actively dragging: ZERO transition for 1:1 mouse tracking */
+.react-grid-item.react-draggable-dragging,
+.react-grid-item.react-draggable-dragging * {
+  transition: none !important;
+  z-index: 100;
+  box-shadow: 0 20px 50px rgba(23, 18, 12, 0.18),
+    0 0 0 1px rgba(126, 145, 117, 0.1);
+  will-change: left, top, width, height;
+}
+
+/* While actively resizing: ZERO transition — panel must follow mouse 1:1 */
+.react-grid-item.resizing,
+.react-grid-item.resizing * {
+  transition: none !important;
+  z-index: 100;
+  will-change: width, height, transform;
+}
+
+/* After resize stops: snap back with spring overshoot */
+.react-grid-item.react-grid-item:not(.react-draggable-dragging):not(.resizing) {
+  transition-property: transform, width, height;
+  transition-duration: 400ms;
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Prevent text selection during drag */
+.react-grid-item.react-draggable-dragging,
+.react-grid-item.react-draggable-dragging * {
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Prevent text selection during resize (panel-level) */
+.react-grid-item.resizing,
+.react-grid-item.resizing * {
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: se-resize !important;
+}
+
+/* Resize handle itself should never allow text selection */
+.react-resizable-handle {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Global body-level guard: toggled via JS on resize mousedown/mouseup */
+body.resize-no-select,
+body.resize-no-select * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  user-select: none !important;
+  cursor: se-resize !important;
+}
+
+/* ── Resize Handle ── */
+
+.react-resizable-handle {
+  opacity: 0;
+  transition: opacity 200ms ease;
+  z-index: 20;
+}
+
+.grid-item:hover .react-resizable-handle {
+  opacity: 1;
+}
+
+.react-resizable-handle::after {
+  border-color: var(--cf-muted) !important;
+  opacity: 0.5;
+  transition: opacity 200ms ease, border-color 200ms ease;
+}
+
+.grid-item:hover .react-resizable-handle::after {
+  opacity: 0.7;
+  border-color: var(--cf-accent-sage) !important;
+}
+
+/* ── Container Query: Fluid Content Reflow ── */
+
+/* When widget is narrow: stack horizontal layouts vertically */
+@container widget (max-width: 380px) {
+  .cq-narrow\:flex-col {
+    flex-direction: column !important;
+  }
+  .cq-narrow\:grid-cols-1 {
+    grid-template-columns: 1fr !important;
+  }
+  .cq-narrow\:w-full {
+    width: 100% !important;
+  }
+  .cq-narrow\:text-sm {
+    font-size: 0.75rem !important;
+    line-height: 1rem !important;
+  }
+  .cq-narrow\:text-xs {
+    font-size: 0.625rem !important;
+    line-height: 0.875rem !important;
+  }
+  .cq-narrow\:hidden {
+    display: none !important;
+  }
+  .cq-narrow\:min-h-\[60px\] {
+    min-height: 60px !important;
+  }
+  .cq-narrow\:p-3 {
+    padding: 0.75rem !important;
+  }
+  .cq-narrow\:p-4 {
+    padding: 1rem !important;
+  }
+  .cq-narrow\:gap-1 {
+    gap: 0.25rem !important;
+  }
+  .cq-narrow\:gap-2 {
+    gap: 0.5rem !important;
+  }
+  .cq-narrow\:mt-1 {
+    margin-top: 0.25rem !important;
+  }
+  .cq-narrow\:mt-2 {
+    margin-top: 0.5rem !important;
+  }
+  .cq-narrow\:truncate {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* When widget is medium width: compact layout */
+@container widget (max-width: 500px) {
+  .cq-medium\:flex-col {
+    flex-direction: column !important;
+  }
+  .cq-medium\:text-sm {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+  .cq-medium\:p-4 {
+    padding: 1rem !important;
+  }
+  .cq-medium\:gap-2 {
+    gap: 0.5rem !important;
+  }
+  .cq-medium\:min-h-\[80px\] {
+    min-height: 80px !important;
+  }
+}
+
+/* When widget is short: compress vertically */
+@container widget (max-height: 220px) {
+  .cq-short\:hidden {
+    display: none !important;
+  }
+  .cq-short\:overflow-y-auto {
+    overflow-y: auto !important;
+  }
+  .cq-short\:min-h-0 {
+    min-height: 0 !important;
+  }
+  .cq-short\:p-3 {
+    padding: 0.75rem !important;
+  }
+  .cq-short\:gap-1 {
+    gap: 0.25rem !important;
+  }
+  .cq-short\:mt-1 {
+    margin-top: 0.25rem !important;
+  }
+  .cq-short\:text-sm {
+    font-size: 0.875rem !important;
+  }
+  .cq-short\:max-h-\[40px\] {
+    max-height: 40px !important;
+  }
+  .cq-short\:max-h-\[60px\] {
+    max-height: 60px !important;
+  }
+  .cq-short\:line-clamp-1 {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 1 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+  .cq-short\:line-clamp-2 {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Smooth transitions for content reflow (idle state only) */
+.grid-item-inner * {
+  transition: font-size 200ms ease,
+    padding 200ms ease,
+    margin 200ms ease,
+    gap 200ms ease,
+    max-height 200ms ease;
+}
