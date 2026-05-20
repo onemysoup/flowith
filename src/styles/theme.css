@@ -1,34 +1,38 @@
 :root {
   --cf-bg: #f9f6f0;
-  --cf-panel: #fffdf9;
+  --cf-panel: #ffffff;
   --cf-text: #2c2c2a;
-  --cf-muted: #74716a;
-  --cf-border: rgba(62, 55, 46, 0.08);
+  --cf-muted: #9b978f;
+  --cf-border: rgba(62, 55, 46, 0.06);
   --cf-accent-terracotta: #9a5d40;
   --cf-accent-sage: #7e9175;
   --cf-accent-indigo: #2f3f5b;
+  --cf-card-bg: #f6f4ee;
   --cf-font-serif: Georgia, "Times New Roman", "STSong", serif;
-  --cf-font-sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+  --cf-font-sans: Inter, "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", system-ui, sans-serif;
+  --cf-shadow-panel: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 8px -1px rgba(0, 0, 0, 0.02);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --cf-bg: #1a1a18;
-    --cf-panel: #22211f;
+    --cf-panel: #242320;
     --cf-text: #ece8dd;
-    --cf-muted: #b8b0a2;
-    --cf-border: rgba(233, 222, 205, 0.11);
+    --cf-muted: #8a8478;
+    --cf-border: rgba(233, 222, 205, 0.06);
     --cf-accent-terracotta: #c38363;
     --cf-accent-sage: #98b18e;
     --cf-accent-indigo: #8c9bbb;
+    --cf-card-bg: #2a2926;
+    --cf-shadow-panel: 0 4px 20px -2px rgba(0, 0, 0, 0.2), 0 2px 8px -1px rgba(0, 0, 0, 0.15);
   }
 }
 
 .paper-card {
   background: var(--cf-panel);
-  border: 1px solid var(--cf-border);
-  border-radius: 18px;
-  box-shadow: 0 10px 24px rgba(23, 18, 12, 0.07);
+  border: none;
+  border-radius: 20px;
+  box-shadow: var(--cf-shadow-panel);
 }
 
 .section-title {
@@ -36,16 +40,17 @@
   font-family: var(--cf-font-serif);
   letter-spacing: 0.02em;
   font-weight: 600;
+  color: var(--cf-text);
 }
 
 .fade-in {
-  animation: fadeIn 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: fadeIn 400ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;

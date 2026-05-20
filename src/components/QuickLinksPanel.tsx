@@ -49,51 +49,52 @@ export default function QuickLinksPanel({
   };
 
   return (
-    <article className="flex h-full flex-col p-5 cq-narrow:p-3" ref={contentRef}>
-      <h2 className="section-title text-2xl cq-narrow:text-sm cq-short:text-sm">快速入口</h2>
-      <div className="mt-3 flex flex-wrap items-center gap-2 cq-narrow:mt-1">
+    <article className="flex h-full flex-col p-6 cq-narrow:p-4" ref={contentRef}>
+      <h2 className="section-title text-lg cq-narrow:text-sm cq-short:text-sm">快速入口</h2>
+      <div className="mt-4 flex flex-wrap items-center gap-3 cq-narrow:mt-2">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="网站名称"
-          className="min-w-[80px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2 text-sm"
+          className="min-w-[80px] flex-1 px-4 py-2.5"
         />
         <input
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://..."
-          className="min-w-[100px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2 text-sm"
+          className="min-w-[100px] flex-1 px-4 py-2.5"
         />
-        <button onClick={() => void addLink()} className="rounded-lg bg-[var(--cf-accent-sage)] px-3 py-2 text-sm text-white">
+        <button
+          onClick={() => void addLink()}
+          className="rounded-xl bg-[var(--cf-accent-sage)] px-5 py-2.5 text-sm text-white transition-opacity hover:opacity-85"
+        >
           添加
         </button>
       </div>
 
-      <div
-        className="mt-3 grid flex-1 gap-2 overflow-y-auto cq-short:overflow-y-auto"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))" }}
-      >
+      {/* Link grid: borderless, text-link aesthetic */}
+      <div className="mt-5 flex flex-1 flex-wrap content-start gap-x-6 gap-y-3 overflow-y-auto cq-short:mt-2">
         {links.map((link) => {
           const favicon = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(link.url)}&sz=64`;
           return (
-            <div key={link.id} className="rounded-2xl border border-[var(--cf-border)] p-2 text-center">
-              <a href={link.url} target="_blank" rel="noreferrer" className="no-underline">
-                <img
-                  src={favicon}
-                  alt={link.name}
-                  className="mx-auto h-5 w-5 cq-narrow:h-4 cq-narrow:w-4"
-                  onError={(e) => { e.currentTarget.style.display = "none"; }}
-                />
-                <span className="mt-1 block font-serif text-sm text-[var(--cf-accent-terracotta)] cq-narrow:text-xs cq-short:line-clamp-1">
-                  {link.name.charAt(0).toUpperCase()}
-                </span>
-                <span className="mt-0.5 block text-xs text-[var(--cf-text)] cq-short:line-clamp-1 cq-narrow:truncate">
-                  {link.name}
-                </span>
+            <div key={link.id} className="group flex items-center gap-2">
+              <img
+                src={favicon}
+                alt={link.name}
+                className="h-4 w-4 flex-shrink-0 cq-narrow:h-3.5 cq-narrow:w-3.5"
+                onError={(e) => { e.currentTarget.style.display = "none"; }}
+              />
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-[var(--cf-accent-indigo)] no-underline transition-colors hover:text-[var(--cf-accent-terracotta)] cq-narrow:text-xs"
+              >
+                {link.name}
               </a>
               <button
                 onClick={() => void remove(link.id)}
-                className="mt-1 text-xs text-[var(--cf-muted)] hover:text-[var(--cf-accent-terracotta)] cq-short:hidden"
+                className="text-xs text-[var(--cf-muted)] opacity-0 transition-opacity group-hover:opacity-100 hover:text-[var(--cf-accent-terracotta)] cq-short:hidden"
               >
                 删除
               </button>

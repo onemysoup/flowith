@@ -26,32 +26,32 @@ export default function App() {
   };
 
   return (
-    <main className="px-4 py-6 md:px-8">
-      <header className="mb-6 flex items-start justify-between">
+    <main className="px-6 py-8 md:px-10">
+      <header className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="section-title text-4xl">flowith</h1>
-          <p className="mt-3 max-w-2xl text-sm text-[var(--cf-muted)]">
-            校园生活效率伴侣：管理任务、归档思考、追踪目标，把握学生时代的节奏。
+          <h1 className="section-title text-3xl tracking-wide">flowith</h1>
+          <p className="mt-2 max-w-lg text-sm text-[var(--cf-muted)]" style={{ lineHeight: 1.6 }}>
+            校园生活效率伴侣
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <button
             onClick={handleReset}
-            className="rounded-lg border border-[var(--cf-border)] px-3 py-2 text-sm text-[var(--cf-muted)] transition-colors hover:bg-[rgba(126,145,117,0.12)] hover:text-[var(--cf-text)]"
+            className="text-xs text-[var(--cf-muted)] transition-colors hover:text-[var(--cf-text)]"
             title="重置为默认布局"
           >
-            ↻ 重置布局
+            重置布局
           </button>
           <button
             onClick={handleMinimize}
-            className="rounded-lg bg-[var(--cf-bg)] px-3 py-2 text-sm font-medium text-[var(--cf-text)] hover:bg-[var(--cf-panel)] transition-colors"
+            className="text-sm text-[var(--cf-muted)] transition-colors hover:text-[var(--cf-text)]"
             title="最小化到托盘"
           >
             −
           </button>
           <button
             onClick={handleClose}
-            className="rounded-lg bg-[var(--cf-bg)] px-3 py-2 text-sm font-medium text-[var(--cf-text)] hover:bg-[var(--cf-panel)] transition-colors"
+            className="text-sm text-[var(--cf-muted)] transition-colors hover:text-[var(--cf-text)]"
             title="关闭"
           >
             ✕

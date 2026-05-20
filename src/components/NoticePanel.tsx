@@ -87,19 +87,19 @@ export default function NoticePanel({
 
   return (
     <>
-      <article className="flex h-full flex-col p-5 cq-narrow:p-3" ref={contentRef}>
+      <article className="flex h-full flex-col p-6 cq-narrow:p-4" ref={contentRef}>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="section-title text-2xl cq-narrow:text-sm cq-short:text-sm">校园通知</h2>
-          <div className="flex gap-2">
+          <h2 className="section-title text-lg cq-narrow:text-sm cq-short:text-sm">校园通知</h2>
+          <div className="flex gap-3">
             <button
               onClick={() => void load()}
-              className="rounded-lg border border-[var(--cf-border)] px-3 py-1 text-xs hover:bg-[rgba(126,145,117,0.12)]"
+              className="text-xs text-[var(--cf-muted)] transition-colors hover:text-[var(--cf-text)]"
             >
               刷新
             </button>
             <button
               onClick={() => setEditing((v) => !v)}
-              className="rounded-lg border border-[var(--cf-border)] px-3 py-1 text-xs hover:bg-[rgba(47,63,91,0.1)]"
+              className="text-xs text-[var(--cf-muted)] transition-colors hover:text-[var(--cf-text)]"
             >
               抓取配置
             </button>
@@ -107,28 +107,28 @@ export default function NoticePanel({
         </div>
 
         {editing && (
-          <div className="mt-3 flex flex-wrap gap-2 rounded-lg border border-[var(--cf-border)] p-3 text-xs cq-narrow:mt-1">
-            <input value={config.sourceName} onChange={(e) => setConfig((p) => ({ ...p, sourceName: e.target.value }))} placeholder="来源名称" className="min-w-[100px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2" />
-            <input value={config.listUrl} onChange={(e) => setConfig((p) => ({ ...p, listUrl: e.target.value }))} placeholder="列表 URL" className="min-w-[100px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2" />
-            <input value={config.itemSelector} onChange={(e) => setConfig((p) => ({ ...p, itemSelector: e.target.value }))} placeholder="itemSelector" className="min-w-[80px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2" />
-            <input value={config.titleSelector} onChange={(e) => setConfig((p) => ({ ...p, titleSelector: e.target.value }))} placeholder="titleSelector" className="min-w-[80px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2" />
-            <input value={config.departmentSelector} onChange={(e) => setConfig((p) => ({ ...p, departmentSelector: e.target.value }))} placeholder="departmentSelector" className="min-w-[80px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2" />
-            <input value={config.timeSelector} onChange={(e) => setConfig((p) => ({ ...p, timeSelector: e.target.value }))} placeholder="timeSelector" className="min-w-[80px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2" />
-            <input value={config.linkSelector ?? ""} onChange={(e) => setConfig((p) => ({ ...p, linkSelector: e.target.value }))} placeholder="linkSelector 可选" className="min-w-[80px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2" />
-            <input value={config.contentSelector ?? ""} onChange={(e) => setConfig((p) => ({ ...p, contentSelector: e.target.value }))} placeholder="contentSelector 可选" className="min-w-[80px] flex-1 rounded-lg border border-[var(--cf-border)] bg-transparent px-3 py-2" />
-            <button onClick={() => void saveConfig()} className="w-full rounded-lg bg-[var(--cf-accent-indigo)] px-3 py-2 text-white">
+          <div className="mt-4 flex flex-wrap gap-2 rounded-2xl bg-[var(--cf-card-bg)] p-4 text-xs cq-narrow:mt-2">
+            <input value={config.sourceName} onChange={(e) => setConfig((p) => ({ ...p, sourceName: e.target.value }))} placeholder="来源名称" className="min-w-[100px] flex-1 px-3 py-2" />
+            <input value={config.listUrl} onChange={(e) => setConfig((p) => ({ ...p, listUrl: e.target.value }))} placeholder="列表 URL" className="min-w-[100px] flex-1 px-3 py-2" />
+            <input value={config.itemSelector} onChange={(e) => setConfig((p) => ({ ...p, itemSelector: e.target.value }))} placeholder="itemSelector" className="min-w-[80px] flex-1 px-3 py-2" />
+            <input value={config.titleSelector} onChange={(e) => setConfig((p) => ({ ...p, titleSelector: e.target.value }))} placeholder="titleSelector" className="min-w-[80px] flex-1 px-3 py-2" />
+            <input value={config.departmentSelector} onChange={(e) => setConfig((p) => ({ ...p, departmentSelector: e.target.value }))} placeholder="departmentSelector" className="min-w-[80px] flex-1 px-3 py-2" />
+            <input value={config.timeSelector} onChange={(e) => setConfig((p) => ({ ...p, timeSelector: e.target.value }))} placeholder="timeSelector" className="min-w-[80px] flex-1 px-3 py-2" />
+            <input value={config.linkSelector ?? ""} onChange={(e) => setConfig((p) => ({ ...p, linkSelector: e.target.value }))} placeholder="linkSelector 可选" className="min-w-[80px] flex-1 px-3 py-2" />
+            <input value={config.contentSelector ?? ""} onChange={(e) => setConfig((p) => ({ ...p, contentSelector: e.target.value }))} placeholder="contentSelector 可选" className="min-w-[80px] flex-1 px-3 py-2" />
+            <button onClick={() => void saveConfig()} className="w-full rounded-xl bg-[var(--cf-accent-indigo)] px-4 py-2.5 text-white transition-opacity hover:opacity-85">
               保存并抓取
             </button>
           </div>
         )}
 
-        {/* Notice list: flex-1 fills remaining space, scrollable */}
-        <ul className="mt-3 flex-1 space-y-2 overflow-y-auto cq-short:mt-1 cq-short:space-y-1">
+        {/* Notice list */}
+        <ul className="mt-4 flex-1 space-y-1 overflow-y-auto cq-short:mt-2">
           {brief.map((notice) => (
             <li
               key={notice.id}
               onClick={() => setSelected(notice)}
-              className="cursor-pointer rounded-lg border border-[var(--cf-border)] p-3 transition-colors hover:bg-[rgba(126,145,117,0.08)] cq-short:p-2"
+              className="cursor-pointer rounded-xl px-4 py-3 transition-colors hover:bg-[var(--cf-card-bg)] cq-short:py-2"
             >
               <p className="m-0 truncate text-sm font-medium cq-short:line-clamp-1">{notice.title}</p>
               <p className="m-0 mt-1 text-xs text-[var(--cf-muted)] cq-narrow:truncate cq-short:hidden">
@@ -138,8 +138,8 @@ export default function NoticePanel({
           ))}
         </ul>
 
-        {loading && <p className="mt-2 text-xs text-[var(--cf-muted)] cq-short:hidden">正在抓取通知...</p>}
-        {error && <p className="mt-2 text-xs text-[var(--cf-accent-terracotta)] cq-short:hidden">{error}</p>}
+        {loading && <p className="mt-3 text-xs text-[var(--cf-muted)] cq-short:hidden">正在抓取通知...</p>}
+        {error && <p className="mt-3 text-xs text-[var(--cf-accent-terracotta)] cq-short:hidden">{error}</p>}
       </article>
 
       <aside

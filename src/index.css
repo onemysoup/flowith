@@ -69,11 +69,11 @@ body {
 /* ── Grid Placeholder (snap preview) ── */
 
 .react-grid-placeholder {
-  background: rgba(126, 145, 117, 0.15) !important;
-  border: 2px dashed rgba(126, 145, 117, 0.4) !important;
-  border-radius: 18px !important;
+  background: rgba(126, 145, 117, 0.08) !important;
+  border: 1.5px dashed rgba(126, 145, 117, 0.25) !important;
+  border-radius: 20px !important;
   opacity: 1 !important;
-  transition: all 150ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  transition: all 180ms cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 /* ── Spring / Jelly Animation for Grid Items ── */
@@ -85,11 +85,11 @@ body {
   backface-visibility: hidden;
 }
 
-/* Spring easing: slight overshoot for jelly feel */
+/* Refined spring easing: subtle, silk-like overshoot */
 .react-grid-item.cssTransforms {
   transition-property: transform, width, height;
-  transition-duration: 320ms;
-  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-duration: 360ms;
+  transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* While actively dragging: ZERO transition for 1:1 mouse tracking */
@@ -97,8 +97,8 @@ body {
 .react-grid-item.react-draggable-dragging * {
   transition: none !important;
   z-index: 100;
-  box-shadow: 0 20px 50px rgba(23, 18, 12, 0.18),
-    0 0 0 1px rgba(126, 145, 117, 0.1);
+  box-shadow: 0 24px 60px -8px rgba(0, 0, 0, 0.12),
+    0 8px 20px -4px rgba(0, 0, 0, 0.06);
   will-change: left, top, width, height;
 }
 
@@ -110,11 +110,11 @@ body {
   will-change: width, height, transform;
 }
 
-/* After resize stops: snap back with spring overshoot */
+/* After resize stops: silk-like snap back */
 .react-grid-item.react-grid-item:not(.react-draggable-dragging):not(.resizing) {
   transition-property: transform, width, height;
-  transition-duration: 400ms;
-  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-duration: 420ms;
+  transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Prevent text selection during drag */
@@ -293,4 +293,39 @@ body.resize-no-select * {
     margin 200ms ease,
     gap 200ms ease,
     max-height 200ms ease;
+}
+
+/* ── Global Refined Inputs (Anthropic minimal aesthetic) ── */
+
+input,
+textarea {
+  border: 1px solid var(--cf-border) !important;
+  border-radius: 10px !important;
+  background: var(--cf-card-bg) !important;
+  color: var(--cf-text) !important;
+  font-family: var(--cf-font-sans) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.6 !important;
+  transition: border-color 200ms ease, box-shadow 200ms ease !important;
+}
+
+input:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: rgba(126, 145, 117, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(126, 145, 117, 0.08) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--cf-muted) !important;
+  opacity: 0.6 !important;
+}
+
+textarea {
+  resize: none !important;
+}
+
+button {
+  font-family: var(--cf-font-sans) !important;
 }
