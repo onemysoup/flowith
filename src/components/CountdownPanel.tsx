@@ -65,7 +65,7 @@ export default function CountdownPanel({
     <section className="flex h-full flex-col gap-5 p-6 cq-narrow:p-4" ref={contentRef}>
       {/* Countdown cards: paper blocks on card-bg */}
       <div className="flex flex-wrap gap-4 cq-narrow:gap-3">
-        {rows.slice(0, 2).map((card) => (
+        {rows.map((card) => (
           <article
             key={card.id}
             className="min-w-[120px] flex-1 rounded-2xl bg-[var(--cf-card-bg)] p-5 cq-narrow:p-4"

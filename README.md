@@ -25,6 +25,7 @@ flowith 是一个面向大学生的轻量化桌面效率应用，采用 **Tauri 
   - 默认目录: `~/Documents/CampusFlow/Thoughts/`
 - 核心功能 C: 校园通知
   - 支持配置学校通知源 URL 与 Selector
+  - 支持校内站认证抓取（Cookie / 账号密码表单登录）
   - 支持实时抓取标题/部门/时间
   - 支持详情 Drawer 半窗阅读正文
   - 支持定时静默刷新

@@ -48,3 +48,5 @@ export const countdownApi = {
     }),
   remove: (id: string) => invoke<string>("delete_countdown", { id })
 };
+
+export const openUrl = (url: string) => invoke<void>("open_url", { url });

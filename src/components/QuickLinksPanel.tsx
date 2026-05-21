@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { quickLinkApi } from "../lib/tauri";
+import { openUrl, quickLinkApi } from "../lib/tauri";
 import { useContentMinSize } from "../lib/useContentMinSize";
 import type { QuickLink } from "../types";
 
@@ -7,6 +7,11 @@ interface Props {
   gridCols?: number;
   gridContainerWidth?: number;
   onMinSizeChange?: (key: string, w: number, h: number) => void;
+}
+
+function normalizeUrl(url: string): string {
+  if (/^https?:\/\//i.test(url)) return url;
+  return `https://${url}`;
 }
 
 export default function QuickLinksPanel({
@@ -35,7 +40,7 @@ export default function QuickLinksPanel({
 
   const addLink = async () => {
     const cleanName = name.trim();
-    const cleanUrl = url.trim();
+    const cleanUrl = normalizeUrl(url.trim());
     if (!cleanName || !cleanUrl) return;
     const created = await quickLinkApi.add(cleanName, cleanUrl);
     setLinks((prev) => [created, ...prev]);
@@ -75,7 +80,8 @@ export default function QuickLinksPanel({
       {/* Link grid: borderless, text-link aesthetic */}
       <div className="mt-5 flex flex-1 flex-wrap content-start gap-x-6 gap-y-3 overflow-y-auto cq-short:mt-2">
         {links.map((link) => {
-          const favicon = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(link.url)}&sz=64`;
+          const normalizedUrl = normalizeUrl(link.url);
+          const favicon = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(normalizedUrl)}&sz=64`;
           return (
             <div key={link.id} className="group flex items-center gap-2">
               <img
@@ -84,14 +90,12 @@ export default function QuickLinksPanel({
                 className="h-4 w-4 flex-shrink-0 cq-narrow:h-3.5 cq-narrow:w-3.5"
                 onError={(e) => { e.currentTarget.style.display = "none"; }}
               />
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm text-[var(--cf-accent-indigo)] no-underline transition-colors hover:text-[var(--cf-accent-terracotta)] cq-narrow:text-xs"
+              <button
+                onClick={() => void openUrl(normalizedUrl)}
+                className="text-sm text-[var(--cf-accent-indigo)] transition-colors hover:text-[var(--cf-accent-terracotta)] cq-narrow:text-xs"
               >
                 {link.name}
-              </a>
+              </button>
               <button
                 onClick={() => void remove(link.id)}
                 className="text-xs text-[var(--cf-muted)] opacity-0 transition-opacity group-hover:opacity-100 hover:text-[var(--cf-accent-terracotta)] cq-short:hidden"

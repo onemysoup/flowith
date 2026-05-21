@@ -51,7 +51,7 @@ export const PANELS: PanelDef[] = [
   {
     key: "notice",
     title: "校园通知",
-    minSize: { lg: { w: 6, h: 5 }, md: { w: 6, h: 5 }, sm: { w: 6, h: 5 } },
+    minSize: { lg: { w: 6, h: 5 }, md: { w: 5, h: 5 }, sm: { w: 6, h: 5 } },
   },
   {
     key: "quicklinks",
@@ -73,7 +73,7 @@ export const INITIAL_DEFAULT_LAYOUT: ResponsiveLayouts = Object.freeze({
     { i: "countdown", x: 0, y: 0, w: 10, h: 4, minW: 6, minH: 4 },
     { i: "todo", x: 0, y: 4, w: 5, h: 7, minW: 5, minH: 5 },
     { i: "thought", x: 5, y: 4, w: 5, h: 7, minW: 5, minH: 5 },
-    { i: "notice", x: 0, y: 11, w: 5, h: 7, minW: 6, minH: 5 },
+    { i: "notice", x: 0, y: 11, w: 5, h: 7, minW: 5, minH: 5 },
     { i: "quicklinks", x: 5, y: 11, w: 5, h: 7, minW: 5, minH: 3 },
   ],
   sm: [

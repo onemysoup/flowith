@@ -42,4 +42,12 @@ export interface NoticeSourceConfig {
   timeSelector: string;
   linkSelector?: string;
   contentSelector?: string;
+  authMode?: "none" | "cookie" | "form";
+  cookie?: string;
+  loginUrl?: string;
+  username?: string;
+  password?: string;
+  usernameField?: string;
+  passwordField?: string;
+  loginExtraBody?: string;
 }

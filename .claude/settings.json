@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(node -e \"const RGL = require\\('react-grid-layout'\\); console.log\\(typeof RGL, typeof RGL.Responsive, typeof RGL.WidthProvider, Object.keys\\(RGL\\)\\)\")"
+    ]
+  }
+}

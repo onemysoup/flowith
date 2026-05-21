@@ -26,7 +26,7 @@ body {
 }
 
 .grid-item {
-  overflow: hidden;
+  /* overflow: hidden removed — it interfered with react-grid-layout resize handle */
 }
 
 .grid-item-inner {

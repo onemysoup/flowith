@@ -5,11 +5,11 @@ import { GRID_MARGIN, GRID_ROW_HEIGHT } from "./layout";
  * Monitors a panel's content and reports the minimum grid height (h)
  * required to display all content without clipping.
  *
- * Width is NOT reported — it's grid-controlled and reporting it
- * would create a feedback loop.
+ * Uses a hidden off-screen clone for measurement — the live element
+ * is NEVER touched (no fights with react-grid-layout inline styles).
  *
- * Uses a hidden off-screen clone for measurement so the live element
- * is NEVER touched (avoiding fights with react-grid-layout's inline styles).
+ * Reports BOTH increases AND decreases in required height, so the panel
+ * can shrink when content is removed (not just grow).
  */
 
 const unitH = GRID_ROW_HEIGHT;
@@ -41,11 +41,11 @@ export function useContentMinSize(
     const el = contentRef.current;
     if (!el || !enabled || containerWidth <= 0) return;
 
+    // Reset so the first measurement after deps change always reports
+    lastReportedH.current = 0;
+
     const measure = () => {
-      // Clone the live element into a hidden off-screen container.
-      // This NEVER modifies the live element's inline styles,
-      // so it doesn't fight with react-grid-layout's width/height control.
-      const minWidthPx = Math.max(200, (containerWidth / cols) * 2);
+      const measureWidth = Math.max(200, el.clientWidth);
 
       const wrapper = document.createElement("div");
       wrapper.style.cssText =
@@ -55,11 +55,10 @@ export function useContentMinSize(
       const clone = el.cloneNode(true) as HTMLElement;
       clone.style.cssText =
         "display:flex;flex-direction:column;" +
-        `width:${minWidthPx}px;min-width:${minWidthPx}px;` +
+        `width:${measureWidth}px;min-width:${measureWidth}px;` +
         "height:auto;min-height:0;max-height:none;" +
         "overflow:visible;flex:none;";
 
-      // Let all children size naturally
       clone.querySelectorAll<HTMLElement>("*").forEach((child) => {
         child.style.height = "auto";
         child.style.maxHeight = "none";
@@ -74,27 +73,24 @@ export function useContentMinSize(
 
       document.body.removeChild(wrapper);
 
-      // Convert pixels → grid units (height only)
       const minH = Math.max(2, Math.ceil((naturalH + paddingY * 2 + GRID_MARGIN[1]) / (unitH + GRID_MARGIN[1])));
 
-      // Only fire callback when minimum height actually increases
-      if (minH > lastReportedH.current) {
+      if (minH !== lastReportedH.current) {
         lastReportedH.current = minH;
         if (debounceTimer.current) clearTimeout(debounceTimer.current);
         debounceTimer.current = setTimeout(() => {
-          onMinSizeChange(panelKey, 0, minH); // 0 = don't touch width
-        }, 80);
+          onMinSizeChange(panelKey, 0, minH);
+        }, 120);
       }
     };
 
-    // Observe content area for size changes
     const observer = new ResizeObserver(() => measure());
     observer.observe(el);
 
-    // Watch for DOM changes (adding/removing items, text input)
     const mutObserver = new MutationObserver(() => measure());
     mutObserver.observe(el, { childList: true, subtree: true, characterData: true });
 
+    // Synchronous initial measurement — grid has already applied layout
     measure();
 
     return () => {

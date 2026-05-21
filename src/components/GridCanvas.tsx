@@ -88,21 +88,19 @@ export default function GridCanvas({ resetTick = 0 }: Props) {
           const staticMinW = staticMin?.w ?? 2;
           const staticMinH = staticMin?.h ?? 2;
 
+          // minW=0 means "don't touch width"; minH=0 means "don't touch height"
           const effectiveMinW = minW > 0 ? Math.max(minW, staticMinW) : staticMinW;
           const effectiveMinH = minH > 0 ? Math.max(minH, staticMinH) : (item.minH ?? staticMinH);
 
-          if (effectiveMinW === (item.minW ?? 0) && effectiveMinH <= (item.minH ?? 0)) return item;
+          if (effectiveMinW === (item.minW ?? 0) && effectiveMinH === (item.minH ?? 0)) return item;
 
           changed = true;
           const newItem = { ...item };
-          if (effectiveMinW > (item.minW ?? 0)) {
-            newItem.minW = effectiveMinW;
-            if (newItem.w < effectiveMinW) newItem.w = effectiveMinW;
-          }
-          if (effectiveMinH > (item.minH ?? 0)) {
-            newItem.minH = effectiveMinH;
-            if (newItem.h < effectiveMinH) newItem.h = effectiveMinH;
-          }
+          newItem.minW = effectiveMinW;
+          newItem.minH = effectiveMinH;
+          // Ensure current size respects new minimums
+          if (newItem.w < effectiveMinW) newItem.w = effectiveMinW;
+          if (newItem.h < effectiveMinH) newItem.h = effectiveMinH;
           return newItem;
         });
 
